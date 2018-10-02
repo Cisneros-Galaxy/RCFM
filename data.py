@@ -1,13 +1,10 @@
 from os import listdir
 
 class Data:
-  GALAXIES_DIR_REL_PATH = "data/Rotmod_LTG/"
-
   # Goes into the specified folder for Galaxies and returns
-  #  all files in the folder. Defaults to the class const, but
-  #  can be provided for testing.
-  def getGalaxyFiles(self, galaxiesDirRelPath=GALAXIES_DIR_REL_PATH):
-    return listdir(galaxiesDirRelPath)
+  #  all files in the specified relative folder
+  def getFiles(self, dirRelPath):
+    return listdir(dirRelPath)
 
   # Given a line of data from a file, convert each string value
   #  (which are sepperated by tabs) to floats
@@ -17,8 +14,8 @@ class Data:
     return floatValues
 
   # Returns all the galaxy data in the given folder
-  def getGalaxyData(self, galaxiesDirRelPath=GALAXIES_DIR_REL_PATH):
-    files = self.getGalaxyFiles(galaxiesDirRelPath)
+  def getGalaxyData(self, galaxiesDirRelPath):
+    files = self.getFiles(galaxiesDirRelPath)
 
     # Dictionary "galaxy name"->[list of data points]
     data = {}
@@ -32,7 +29,7 @@ class Data:
       # Convert each line to a list of data points
       parsedLines = list(map(self.dataLineToValues, dataLines))
       
-      data[fileName] = parsedLines
+      data[fileName[:-4]] = parsedLines
       file.close()
 
     return data
