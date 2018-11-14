@@ -13,7 +13,7 @@ c = 3 * (10**5) # km/s
 # Params
 #  radii    - an array of all the radii to calculate at
 #  vSquared - an array of vSquared at each radius
-def CalcPhi(radii, vSquared):
+def CalcWithRadiiAndVSquared(radii, vSquared):
   phi = []
   for i in range(len(radii)):
     # Get min radius. Will be 0 for the first time, then the previous r for every other
