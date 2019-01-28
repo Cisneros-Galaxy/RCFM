@@ -1,4 +1,4 @@
-from scipy.integrate import quad as integrate
+from scipy.integrate import cumtrapz as cumtrapz
 
 # Variables needed for other functions
 c = 3 * (10**5) # km/s
@@ -14,31 +14,16 @@ def phiFunc(r, vSquared):
 #  radii    - an array of all the radii to calculate at
 #  vSquared - an array of vSquared at each radius
 def CalcWithRadiiAndVSquared(radii, vSquared):
+  # Make sure radii and vsquared are same size
+  if (len(radii) != len(vSquared)):
+    raise ValueError('CalcWithRadiiAndVSquared: Radii and vSquared parameters must be the same size.')
+
+  # Calculate phi for every radius
   phi = []
-  phi.append(0)
   for i in range(len(radii)):
-    if i == 0:
-        continue
+    phi.append(phiFunc(radii[i], vSquared[i]))
+  
+  # Calculate cumulative integration
+  integration = cumtrapz(phi, radii)
 
-    # Get min radius. Will be 0 for the first time, then the previous r for every other
-    rMin = radii[i-1]
-        
-    # Max radius will always be the radius at current index
-    rMax = radii[i]
-    vS = vSquared[i]
-
-    # New Phi data points are cumulative, so we need to add 
-    #   the previous point (if it exists)
-    newPhiDataPoint = phi[i-1]
-    
-    # Calculate the integral at this point
-    integral, err = integrate(phiFunc, rMin, rMax, vS)
-
-    # Add it to the newPoint (essentially adding to the sum)
-    newPhiDataPoint += integral
-
-    # Append the new point to the array!
-    phi.append(newPhiDataPoint)
-    
-  phi = phi[1:]
-  return phi
+  return integration
