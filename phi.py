@@ -6,8 +6,8 @@ c = 3 * (10**5) # km/s
 # This is the function for calc Phi.
 # NOTE: This function is to be used with Scypi.integrate.quad - when doing this you can specify
 #   arguments to pass in, but it will always pass in the arguments AFTER x (or r in our case)
-def phiFunc(r, vSquared):
-    return (vSquared)/(r*(c*c))
+def force(r, vSquared):
+    return (2*vSquared)/(r*(c*c))
 
 # CalcPhi - Given radii and vSquared, this will return Phi at each radius
 # Params
@@ -21,7 +21,7 @@ def CalcWithRadiiAndVSquared(radii, vSquared):
   # Calculate phi for every radius
   phi = []
   for i in range(len(radii)):
-    phi.append(phiFunc(radii[i], vSquared[i]))
+    phi.append(force(radii[i], vSquared[i]))
   
   # Calculate cumulative integration
   integration = cumtrapz(phi, radii)
