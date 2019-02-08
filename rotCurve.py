@@ -10,7 +10,7 @@ def kappa(phi_mw, phi_other, phi_o):
   return (phi_other-phi_o)/(phi_mw-phi_o)
 
 def vlum(vgas, vdisk, vbul):
-  return math.sqrt(vgas*vgas + vdisk+vdisk + vbul*vbul)
+  return math.sqrt(vgas*vgas + vdisk*vdisk + vbul*vbul)
 
 def v1(phi_mw, phi_other):
   return (1-(2/(math.sqrt((1 - phi_mw)/(1 - phi_other) ) + math.sqrt((1-phi_other)/(1 -
