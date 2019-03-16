@@ -1,6 +1,6 @@
 from scipy.integrate import quad as integrate
 import math
-
+import numpy as np
 # Variables needed for other functions
 c = 3 * (10**5) # km/s
 
@@ -44,7 +44,7 @@ def Phi(radii, VlumSquared):
     phi.append(newPhiDataPoint)
     
   phi = phi[1:]
-  return phi
+  return np.array(phi)
 
 # Kappa - Given phiMilkyWay and phiOtherGalaxy, calculate kappa
 # Params
@@ -69,7 +69,7 @@ def eTsiFlat(beta):
 # Params
 #  VlumOther - Vlum data for another galaxy
 def eTsiCurve(phiMW, phiOther):
-  return ((-2*phiMW+1)/(-2*phiOther + 1))**(1.0/2.0)
+  return np.sqrt((-2*phiMW+1)/(-2*phiOther + 1))
 
 def v1(eTsiCurve):
   num = 2
@@ -77,13 +77,16 @@ def v1(eTsiCurve):
   return (num/den) - 1
 
 def v2(eTsiFlat, eTsiCurve):
+  # Remove the first element of eTsiFlat because it is being used with
+  # Phi arrays, which are 1 shorter due to integration
+  eTsiFlat = np.delete(eTsiFlat, 0)
   num = eTsiFlat + eTsiCurve
   den = eTsiFlat - eTsiCurve
   return num/den
 
-def Vlcm(radii, MW_phi, Other_phi, MW_Vlum, Other_Vlum):
-  MW_phi = Phi(radii, MW_Vlum)
-  Other_phi = Phi(radii, Other_Vlum)
+def Vlcm(radii, MW_Vlum, Other_Vlum):
+  MW_phi = Phi(radii, MW_Vlum*MW_Vlum)
+  Other_phi = Phi(radii, Other_Vlum*Other_Vlum)
   b = beta(Other_Vlum)
   etflat = eTsiFlat(b)
   etCurve = eTsiCurve(MW_phi, Other_phi)
