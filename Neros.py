@@ -75,10 +75,10 @@ def v2(eTsiFlat, eTsiCurve):
 
 def Vlcm(radii, MW_Vlum, Other_Vlum):
   print("[CALCULATING PHI FOR MW]")
-  MW_phi = Phi(radii, MW_Vlum*MW_Vlum)
+  MW_phi = Phi(radii, np.square(MW_Vlum))
   print(MW_phi)
   print("[CALCULATING PHI FOR OTHER]")
-  Other_phi = Phi(radii, Other_Vlum*Other_Vlum)
+  Other_phi = Phi(radii, np.square(Other_Vlum))
   print(Other_phi)
   b = beta(Other_Vlum)
   etflat = eTsiFlat(b)
