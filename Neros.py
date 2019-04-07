@@ -12,43 +12,6 @@ c = 3 * (10**5) # km/s
 def VlumSquared(Vgas, Vdisk, Vbulge):
   return Vgas*Vgas + Vdisk*Vdisk + Vbulge*Vbulge
 
-# CalcPhi - Given radii and vSquared, this will return Phi at each radius
-# Params
-#  radii    - an array of all the radii to calculate at
-#  VlumSquared - an array of VlumSquared at each radius
-# def Phi(radii, VlumSquared):
-#   phi = [0]
-#   radii = np.insert(radii, 0, 0)
-#   VlumSquared = np.insert(VlumSquared, 0, 0)
-#   for i in range(len(radii)):
-#     if i == 0:
-#         continue
-
-#     # Get min radius. Will be 0 for the first time, then the previous r for every other
-#     rMin = radii[i-1]
-        
-#     # Max radius will always be the radius at current index
-#     rMax = radii[i]
-#     vS = VlumSquared[i]
-
-#     # New Phi data points are cumulative, so we need to add 
-#     #   the previous point (if it exists)
-#     newPhiDataPoint = phi[i-1]
-    
-#     # Calculate the integral at this point
-#     integral, err = integrate(lambda r, vS: (vS)/(r*(c*c)), rMin, rMax, vS)
-
-#     # Add it to the newPoint (essentially adding to the sum)
-#     newPhiDataPoint += integral
-
-#     print(rMin, rMax, vS/(rMax*(c*c)), newPhiDataPoint)
-
-#     # Append the new point to the array!
-#     phi.append(newPhiDataPoint)
-    
-#   phi = phi[1:]
-#   print(phi)
-#   return np.array(phi)
 def Phi(radii, VlumSquared):
   phi = []
   radii = np.insert(radii, 0, 0)
