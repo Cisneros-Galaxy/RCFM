@@ -36,7 +36,7 @@ def Phi(radii, VlumSquared):
   print(len(phi))
   print(phi)
 
-  return phi
+  return phi, x, y
 
 # Kappa - Given phiMilkyWay and phiOtherGalaxy, calculate kappa
 # Params
