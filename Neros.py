@@ -1,4 +1,4 @@
-from scipy.integrate import quad as integrate
+from scipy.integrate import cumtrapz as cumtrapz
 import math
 import numpy as np
 # Variables needed for other functions
@@ -13,42 +13,30 @@ def VlumSquared(Vgas, Vdisk, Vbulge):
   return Vgas*Vgas + Vdisk*Vdisk + Vbulge*Vbulge
 
 def Phi(radii, VlumSquared):
-  phi = []
-  radii = np.insert(radii, 0, 0)
-  for i in range(len(radii)-1):
+  # Create an array of just the radii
+  x = radii
+  # Empty array of the y values that will be added
+  y = []
+  # Loop over x values and apply the function to get y values
+  for i in range(len(x)):
+    y.append(VlumSquared[i]/(x[i]*(c*c)))
+  x = np.insert(x, 0, 0)
+  y = np.insert(y, 0, 0)
+  # Calculate the integration
+  phi = cumtrapz(y, x)
 
-    # Get min radius. Will be 0 for the first time, then the previous r for every other
-    rMin = radii[i]
-        
-    # Max radius will always be the radius at current index
-    rMax = radii[i+1]
-    vS = VlumSquared[i]
+  # Printing to check
+  print("[X VALUES TO INTEGRATE]")
+  print(len(x))
+  print(x)
+  print("[Y VALUES TO INTEGRATE]")
+  print(len(y))
+  print(y)
+  print("[PHI VBALUES]")
+  print(len(phi))
+  print(phi)
 
-    # New Phi data points are cumulative, so we need to add 
-    #   the previous point (if it exists)
-    newPhiDataPoint = 0
-    if i != 0:
-      newPhiDataPoint = phi[i-1]
-    
-    # Calculate the integral at this point
-    integral, err = integrate(lambda r, vS: (vS)/(r*(c*c)), rMin, rMax, vS)
-
-    # Add it to the newPoint (essentially adding to the sum)
-    newPhiDataPoint += integral
-
-    print("---Integrating----")
-    print(rMin, " -> ", rMax)
-    print("With constant v^2: ", vS)
-    print("Value: ", integral)
-
-    # print(rMin, rMax, vS, vS/(rMin*(c*c)), newPhiDataPoint)
-
-    # Append the new point to the array!
-    phi.append(newPhiDataPoint)
-    
-  # phi = phi[1:]
-  # print(phi)
-  return np.array(phi)
+  return phi
 
 # Kappa - Given phiMilkyWay and phiOtherGalaxy, calculate kappa
 # Params
