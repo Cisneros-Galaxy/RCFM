@@ -16,23 +16,56 @@ def VlumSquared(Vgas, Vdisk, Vbulge):
 # Params
 #  radii    - an array of all the radii to calculate at
 #  VlumSquared - an array of VlumSquared at each radius
+# def Phi(radii, VlumSquared):
+#   phi = [0]
+#   radii = np.insert(radii, 0, 0)
+#   VlumSquared = np.insert(VlumSquared, 0, 0)
+#   for i in range(len(radii)):
+#     if i == 0:
+#         continue
+
+#     # Get min radius. Will be 0 for the first time, then the previous r for every other
+#     rMin = radii[i-1]
+        
+#     # Max radius will always be the radius at current index
+#     rMax = radii[i]
+#     vS = VlumSquared[i]
+
+#     # New Phi data points are cumulative, so we need to add 
+#     #   the previous point (if it exists)
+#     newPhiDataPoint = phi[i-1]
+    
+#     # Calculate the integral at this point
+#     integral, err = integrate(lambda r, vS: (vS)/(r*(c*c)), rMin, rMax, vS)
+
+#     # Add it to the newPoint (essentially adding to the sum)
+#     newPhiDataPoint += integral
+
+#     print(rMin, rMax, vS/(rMax*(c*c)), newPhiDataPoint)
+
+#     # Append the new point to the array!
+#     phi.append(newPhiDataPoint)
+    
+#   phi = phi[1:]
+#   print(phi)
+#   return np.array(phi)
 def Phi(radii, VlumSquared):
   phi = []
-  phi.append(0)
-  for i in range(len(radii)):
-    if i == 0:
-        continue
+  radii = np.insert(radii, 0, 0)
+  for i in range(len(radii)-1):
 
     # Get min radius. Will be 0 for the first time, then the previous r for every other
-    rMin = radii[i-1]
+    rMin = radii[i]
         
     # Max radius will always be the radius at current index
-    rMax = radii[i]
+    rMax = radii[i+1]
     vS = VlumSquared[i]
 
     # New Phi data points are cumulative, so we need to add 
     #   the previous point (if it exists)
-    newPhiDataPoint = phi[i-1]
+    newPhiDataPoint = 0
+    if i != 0:
+      newPhiDataPoint = phi[i-1]
     
     # Calculate the integral at this point
     integral, err = integrate(lambda r, vS: (vS)/(r*(c*c)), rMin, rMax, vS)
@@ -40,10 +73,18 @@ def Phi(radii, VlumSquared):
     # Add it to the newPoint (essentially adding to the sum)
     newPhiDataPoint += integral
 
+    print("---Integrating----")
+    print(rMin, " -> ", rMax)
+    print("With constant v^2: ", vS)
+    print("Value: ", integral)
+
+    # print(rMin, rMax, vS, vS/(rMin*(c*c)), newPhiDataPoint)
+
     # Append the new point to the array!
     phi.append(newPhiDataPoint)
     
-  phi = phi[1:]
+  # phi = phi[1:]
+  # print(phi)
   return np.array(phi)
 
 # Kappa - Given phiMilkyWay and phiOtherGalaxy, calculate kappa
@@ -74,21 +115,23 @@ def eTsiCurve(phiMW, phiOther):
 def v1(eTsiCurve):
   num = 2
   den = eTsiCurve + 1/eTsiCurve
-  return (num/den) - 1
+  return 1 - (num/den)
 
 def v2(eTsiFlat, eTsiCurve):
-  # Remove the first element of eTsiFlat because it is being used with
-  # Phi arrays, which are 1 shorter due to integration
-  eTsiFlat = np.delete(eTsiFlat, 0)
   num = eTsiFlat + eTsiCurve
   den = eTsiFlat - eTsiCurve
   return num/den
 
 def Vlcm(radii, MW_Vlum, Other_Vlum):
+  print("[CALCULATING PHI FOR MW]")
   MW_phi = Phi(radii, MW_Vlum*MW_Vlum)
+  print(MW_phi)
+  print("[CALCULATING PHI FOR OTHER]")
   Other_phi = Phi(radii, Other_Vlum*Other_Vlum)
+  print(Other_phi)
   b = beta(Other_Vlum)
   etflat = eTsiFlat(b)
   etCurve = eTsiCurve(MW_phi, Other_phi)
+  k = kappa(MW_phi, Other_phi)
 
-  return c*c*kappa(MW_phi, Other_phi)*v1(etCurve)*v2(etflat, etCurve)
+  return c*c*k*v1(etCurve)*v2(etflat, etCurve)
