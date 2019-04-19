@@ -12,7 +12,9 @@ c = 3 * (10**5) # km/s
 def VlumSquared(Vgas, Vdisk, Vbulge):
   return Vgas*Vgas + Vdisk*Vdisk + Vbulge*Vbulge
 
-def Phi(radii, VlumSquared):
+def Phi(radii, Vlum):
+  # Square the vlum
+  VlumSquared = np.square(Vlum)
   # Create an array of just the radii
   x = radii
   # Empty array of the y values that will be added
@@ -32,11 +34,11 @@ def Phi(radii, VlumSquared):
   print("[Y VALUES TO INTEGRATE]")
   print(len(y))
   print(y)
-  print("[PHI VBALUES]")
+  print("[PHI VALUES]")
   print(len(phi))
   print(phi)
 
-  return phi, x, y
+  return phi
 
 # Kappa - Given phiMilkyWay and phiOtherGalaxy, calculate kappa
 # Params
@@ -60,8 +62,8 @@ def eTsiFlat(beta):
 # eTsiCurve - Calculate eTsiCurve given Vlum
 # Params
 #  VlumOther - Vlum data for another galaxy
-def eTsiCurve(phiMW, phiOther):
-  return np.sqrt((-2*phiMW+1)/(-2*phiOther + 1))
+def eTsiCurve(MW_phi, Other_phi):
+  return np.sqrt((-2*MW_phi+1)/(-2*Other_phi + 1))
 
 def v1(eTsiCurve):
   num = 2
@@ -75,10 +77,10 @@ def v2(eTsiFlat, eTsiCurve):
 
 def Vlcm(radii, MW_Vlum, Other_Vlum):
   print("[CALCULATING PHI FOR MW]")
-  MW_phi = Phi(radii, np.square(MW_Vlum))
+  MW_phi = Phi(radii, MW_Vlum)
   print(MW_phi)
   print("[CALCULATING PHI FOR OTHER]")
-  Other_phi = Phi(radii, np.square(Other_Vlum))
+  Other_phi = Phi(radii, Other_Vlum)
   print(Other_phi)
   b = beta(Other_Vlum)
   etflat = eTsiFlat(b)
