@@ -57,7 +57,7 @@ def eTsiCurve(MW_phi, Other_phi):
 def v1(eTsiCurve):
   num = 2
   den = eTsiCurve + 1/eTsiCurve
-  return (num/den) - 1
+  return 1 - (num/den)
 
 def v2(eTsiFlat, eTsiCurve):
   num = eTsiFlat + eTsiCurve
