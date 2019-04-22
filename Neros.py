@@ -33,8 +33,8 @@ def Phi(radii, Vlum):
 # Params
 #  phiMW - array of phi values for Milky Way
 #  phiOther - array of phi values for other galaxy
-def kappa(phiMW, phiOther):
-  return phiOther / phiMW
+def kappa(MW_phi, Other_phi):
+  return Other_phi / MW_phi
 
 # Beta - Calculate the beta value for use in E Tsi
 # Params
@@ -57,7 +57,7 @@ def eTsiCurve(MW_phi, Other_phi):
 def v1(eTsiCurve):
   num = 2
   den = eTsiCurve + 1/eTsiCurve
-  return -(num/den) + 1
+  return (num/den) - 1
 
 def v2(eTsiFlat, eTsiCurve):
   num = eTsiFlat + eTsiCurve
