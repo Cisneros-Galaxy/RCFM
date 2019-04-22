@@ -27,17 +27,6 @@ def Phi(radii, Vlum):
   # Calculate the integration
   phi = cumtrapz(y, x)
 
-  # Printing to check
-  print("[X VALUES TO INTEGRATE]")
-  print(len(x))
-  print(x)
-  print("[Y VALUES TO INTEGRATE]")
-  print(len(y))
-  print(y)
-  print("[PHI VALUES]")
-  print(len(phi))
-  print(phi)
-
   return phi
 
 # Kappa - Given phiMilkyWay and phiOtherGalaxy, calculate kappa
@@ -57,18 +46,18 @@ def beta(VlumOther):
 # Params
 #  VlumOther - Vlum data for another galaxy
 def eTsiFlat(beta):
-  return ((beta+1)/(-beta+1))**(1.0/2.0)
+  return np.sqrt((1 + beta)/(1 - beta))
 
 # eTsiCurve - Calculate eTsiCurve given Vlum
 # Params
 #  VlumOther - Vlum data for another galaxy
 def eTsiCurve(MW_phi, Other_phi):
-  return np.sqrt((-2*MW_phi+1)/(-2*Other_phi + 1))
+  return np.sqrt((1 - 2*MW_phi)/(1 - 2*Other_phi))
 
 def v1(eTsiCurve):
   num = 2
   den = eTsiCurve + 1/eTsiCurve
-  return 1 - (num/den)
+  return -(num/den) + 1
 
 def v2(eTsiFlat, eTsiCurve):
   num = eTsiFlat + eTsiCurve
@@ -76,15 +65,11 @@ def v2(eTsiFlat, eTsiCurve):
   return num/den
 
 def Vlcm(radii, MW_Vlum, Other_Vlum):
-  print("[CALCULATING PHI FOR MW]")
   MW_phi = Phi(radii, MW_Vlum)
-  print(MW_phi)
-  print("[CALCULATING PHI FOR OTHER]")
   Other_phi = Phi(radii, Other_Vlum)
-  print(Other_phi)
   b = beta(Other_Vlum)
   etflat = eTsiFlat(b)
   etCurve = eTsiCurve(MW_phi, Other_phi)
-  k = kappa(MW_phi, Other_phi)
+  k = kappa(MW_phi, Other_phi)v
 
-  return c*c*k*v1(etCurve)*v2(etflat, etCurve)
+  return c*c*k*k*v1(etCurve)*v2(etflat, etCurve)
