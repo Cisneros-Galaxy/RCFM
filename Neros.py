@@ -70,6 +70,6 @@ def Vlcm(radii, MW_Vlum, Other_Vlum):
   b = beta(Other_Vlum)
   etflat = eTsiFlat(b)
   etCurve = eTsiCurve(MW_phi, Other_phi)
-  k = kappa(MW_phi, Other_phi)v
+  k = kappa(MW_phi, Other_phi)
 
   return c*c*k*k*v1(etCurve)*v2(etflat, etCurve)
