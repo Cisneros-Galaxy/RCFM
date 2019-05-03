@@ -73,3 +73,6 @@ def Vlcm(radii, MW_Vlum, Other_Vlum):
   k = kappa(MW_phi, Other_phi)
 
   return c*c*k*k*v1(etCurve)*v2(etflat, etCurve)
+
+def vNeros(Other_Vlum, vLCM, freeParam):
+  return np.sqrt(np.square(Other_Vlum) + freeParam*vLCM)
