@@ -1,3 +1,11 @@
+# To download this project
+
+Go to where you'd like to clone the respoditory (a good place is documents/github) and type:
+`git clone https://github.com/Cisneros-Galaxy/RCFM.git`
+
+# To download latest changes, updates, new branches (etc.) onto your local machine
+
+`git pull`
 # What is this?
 
 This project is a Python3 library and Jupiter Notebook that makes it easy and intuitive to analyze galaxy data.
@@ -16,7 +24,6 @@ Before running anything, you need to install all of the dependencies. There are 
 
 Anaconda is a platform that makes it super easy to work with Python and Notebook. It comes with all the dependencies already installed! Just open it up, click "Launch" under "Jupyter Notebook" then navigate to the project's folder.  
  [Install Anaconda Python 3.6 Version](https://matplotlib.org/faq/installing_faq.html)
-
 # Running the code
 
 1. Open Anaconda
