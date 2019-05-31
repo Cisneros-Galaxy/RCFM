@@ -75,4 +75,4 @@ def Vlcm(radii, MW_Vlum, Other_Vlum):
   return c*c*k*k*v1(etCurve)*v2(etflat, etCurve)
 
 def vNeros(Other_Vlum, vLCM, freeParam):
-  return np.sqrt(np.square(Other_Vlum) + freeParam*vLCM)
+  return np.sqrt(np.square(Other_Vlum) + (vLCM*freeParam) )
