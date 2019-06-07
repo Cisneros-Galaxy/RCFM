@@ -9,19 +9,19 @@ c = 3 * (10**5) # km/s
 #  Vgas
 #  Vdisk
 #  Vbulge
-def VlumSquared(Vgas, Vdisk, Vbulge):
-  return Vgas*Vgas + Vdisk*Vdisk + Vbulge*Vbulge
+def vLumSquared(vGas, vDisk, vBulge):
+  return vGas*vGas + vDisk*vDisk + vBulge*vBulge
 
-def Phi(radii, Vlum):
+def phi(radii, vLum):
   # Square the vlum
-  VlumSquared = np.square(Vlum)
+  vLumSquared = np.square(vLum)
   # Create an array of just the radii
   x = radii
   # Empty array of the y values that will be added
   y = []
   # Loop over x values and apply the function to get y values
   for i in range(len(x)):
-    y.append(VlumSquared[i]/(x[i]*(c*c)))
+    y.append(vLumSquared[i]/(x[i]*(c*c)))
   x = np.insert(x, 0, 0)
   y = np.insert(y, 0, 0)
   # Calculate the integration
@@ -39,8 +39,8 @@ def kappa(MW_phi, Other_phi):
 # Beta - Calculate the beta value for use in E Tsi
 # Params
 #  VlumOther - Vlum data for another galaxy
-def beta(VlumOther):
-  return VlumOther / c
+def beta(vLumOther):
+  return vLumOther / c
 
 # eTsiFlat - Calculate eTsiFlat given Vlum
 # Params
@@ -64,10 +64,10 @@ def v2(eTsiFlat, eTsiCurve):
   den = eTsiFlat - eTsiCurve
   return num/den
 
-def Vlcm(radii, MW_Vlum, Other_Vlum):
-  MW_phi = Phi(radii, MW_Vlum)
-  Other_phi = Phi(radii, Other_Vlum)
-  b = beta(Other_Vlum)
+def vLcm(radii, MW_vLum, Other_vLum):
+  MW_phi = phi(radii, MW_vLum)
+  Other_phi = phi(radii, Other_vLum)
+  b = beta(Other_vLum)
   etflat = eTsiFlat(b)
   etCurve = eTsiCurve(MW_phi, Other_phi)
   k = kappa(MW_phi, Other_phi)
