@@ -79,7 +79,8 @@ def vNeros(Other_Vlum, vLCM, freeParam):
 
 def chiSquared(observed, expected, error):
   chiSq = 0
-  for i in len(observed):
-    chiSquared = chiSquared + (((observed[i] - expected[i])**2) / (error[i]**2))
+    
+  for i in range(len(observed)):
+    chiSq = chiSq + (((observed[i] - expected[i])**2) / (error[i]**2))
     
   return chiSq
