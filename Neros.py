@@ -76,10 +76,3 @@ def vLcm(radii, MW_vLum, Other_vLum):
 
 def vNeros(Other_Vlum, vLCM, freeParam):
     return np.sqrt(np.square(Other_Vlum) + (vLCM*freeParam) )
-
-def chiSquared(observed, expected):
-    chiSq = 0
-    for i in len(observed):
-        chiSquared = chiSquared + (((observed - expected)**2) / expected)
-    
-    return chiSq
