@@ -34,7 +34,7 @@ def phi(radii, vLum):
 #  phiMW - array of phi values for Milky Way
 #  phiOther - array of phi values for other galaxy
 def kappa(MW_phi, Other_phi, phiZero):
-    return (Other_phi - (3 * (10 ** -12))) / (MW_phi - (3 * (10 ** -12)))
+    return (Other_phi - (3 * (10 ** -11))) / (MW_phi - (3 * (10 ** -11)))
 
 # Beta - Calculate the beta value for use in E Tsi
 # Params
