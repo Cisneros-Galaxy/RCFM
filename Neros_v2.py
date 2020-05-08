@@ -15,7 +15,7 @@ import scipy.integrate
 
 c = 3 * (10**5) # km/s
 
-class Neros2:
+class Neros:
     """The Neros Model
     
     This class implements the actual computations of
