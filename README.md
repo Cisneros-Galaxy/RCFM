@@ -30,3 +30,5 @@ Anaconda is a platform that makes it super easy to work with Python and Notebook
 2. Launch Jupyter Notebook
 3. Navigate to where the code is located
 4. Click any of the .ipynb files
+
+# Contributing
