@@ -32,3 +32,5 @@ Anaconda is a platform that makes it super easy to work with Python and Notebook
 4. Click any of the .ipynb files
 
 # Contributing
+
+1. Request to be added as a collaborator to the RCFM project.
