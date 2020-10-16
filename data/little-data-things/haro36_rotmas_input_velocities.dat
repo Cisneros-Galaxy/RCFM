@@ -1,3 +1,4 @@
+#Distance
 # Rad	Vobs	errV	Vgas	Vdisk	Vbul	SBdisk	SBbul
 # kpc	km/s	km/s	km/s	km/s	km/s	L/pc^2	L/pc^2
 0.32	11.44	7.19	3.40	5.44	0.00	0.00	0.00
