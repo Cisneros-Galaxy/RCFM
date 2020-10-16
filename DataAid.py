@@ -3,7 +3,7 @@ from os import listdir
 # Goes into the specified folder for Galaxies and returns
 #  all files in the specified relative folder
 def getFiles(dirRelPath):
-  return listdir(dirRelPath)
+  return [x for x in listdir(dirRelPath) if x[0] != '.']
 
 # Given a line of data from a file, convert each string value
 #  (which are sepperated by tabs) to floats
