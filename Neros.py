@@ -54,6 +54,9 @@ def beta(vLum):
 def eTsiFlat(beta):
     return np.sqrt((1 + beta)/(1 - beta))
 
+def kappa(MW_phi, Other_phi):
+    return  ((Other_phi)/(MW_phi))
+
 # eTsiCurve - Calculate eTsiCurve given Vlum
 # Params
 #  VlumOther - Vlum data for another galaxy
@@ -77,9 +80,10 @@ def vLcm(radii, MW_vLum, vLum):
     b = beta(vLum)
     etflat = eTsiFlat(b)
     etCurve = eTsiCurve(MW_phi, Other_phi)
+    k = kappa(MW_phi, Other_phi)
   
-    return c*c*v1(etCurve)*v2(etflat, etCurve)
- 
+    #return c*c*v1(etCurve)*v2(etflat, etCurve)
+    return c*c*k*k*v1(etCurve)*v2(etflat, etCurve)
 
 def vNeros(vLum, vLcm, fittedAlpha):
     #def vNeros(Other_Vlum, vLCM, freeParam):
