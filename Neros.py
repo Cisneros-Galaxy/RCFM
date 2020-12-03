@@ -64,8 +64,8 @@ def v1(eTsiCurve):
     return 1 - (num/den)
 
 def v2(eTsiFlat, eTsiCurve):
-    num = eTsiFlat + eTsiCurve
-    den = eTsiFlat - eTsiCurve
+    num =    1/(eTsiFlat*eTsiFlat) - eTsiCurve*eTsiCurve 
+    den =  eTsiCurve*eTsiCurve + 1/(eTsiFlat*eTsiFlat)
     return num/den
 
 def vLcm(radii, MW_vLum, Other_vLum):
@@ -78,9 +78,11 @@ def vLcm(radii, MW_vLum, Other_vLum):
      
 
     #took out the terms in kappa squared 
-    return c*c*k*k*v1(etCurve)*v2(etflat, etCurve)
+    return c*v2(etflat, etCurve)
+    #return c*c*k*k*v1(etCurve)*v2(etflat, etCurve)
     #return c*c*v1(etCurve)*v2(etflat, etCurve)
 
 
 def vNeros(Other_Vlum, vLCM, freeParam):
-    return np.sqrt(np.square(Other_Vlum) + (vLCM*freeParam) )
+    #return  (Other_Vlum*0) + (vLCM*freeParam) 
+    return   (vLCM*freeParam)
