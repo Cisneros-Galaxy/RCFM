@@ -84,5 +84,5 @@ def vLcm(radii, MW_vLum, Other_vLum):
 
 
 def vNeros(Other_Vlum, vLCM, freeParam):
-    #return  (Other_Vlum*0) + (vLCM*freeParam) 
-    return   (vLCM*freeParam)
+    return  (Other_Vlum*0) + (vLCM*freeParam) 
+    #return   (vLCM*freeParam)
