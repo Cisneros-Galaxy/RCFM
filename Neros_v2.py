@@ -70,7 +70,7 @@ class Neros:
         return vGas*vGas + vDisk*vDisk + vBulge*vBulge
     
     def curve_fit_fn(self, galaxyData, alpha, vLumFreeParam):
-        """Formally known as 'simple'.
+        """Formerly known as 'simple'.
            This is used as the fitting function in scipy.curve_fit
            to find alpha and vLumFreeParam, and it calculates vNeros 
            using those values. 
