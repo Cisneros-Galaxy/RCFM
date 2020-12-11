@@ -128,7 +128,7 @@ class Neros:
         
         vLCM = self.vLCM(galaxy_rad, galaxy_vLum, phi_zero)
     
-        return np.square(galaxy_vLum) + alpha*vLCM
+        return np.square(galaxy_vLum + alpha*vLCM)
     
     def vLCM(self, galaxy_rad, galaxy_vLum, phi_zero=3e-11):
         """This computes the vLCM - the actual model
