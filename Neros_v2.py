@@ -64,31 +64,26 @@ class Neros:
         mw_phi = self.phi(data[:,0], data[:,1])
         self.mw_phi_interp = interp1d(data[:,0], mw_phi)
         
-    def vLumSquared(self, vGas, vDisk, vBulge):
+    def vLumSquared(self, vGas, vDisk, vBulge, disk_scale=1, bulge_scale=1):
         """Calculates total luminous velocity from the sum of the squares of
            the contributions from gas, disk, and bulge"""
-        return vGas*vGas + vDisk*vDisk + vBulge*vBulge
+        return vGas*vGas + disk_scale*vDisk*vDisk + bulge_scale*vBulge*vBulge
     
-    def curve_fit_fn(self, galaxyData, alpha, vLumFreeParam):
+    def curve_fit_fn(self, galaxyData, alpha, vLumFreeParam, disk_scale, bulge_scale):
         """Formerly known as 'simple'.
-           This is used as the fitting function in scipy.curve_fit
-           to find alpha and vLumFreeParam, and it calculates vNeros 
-           using those values. 
-           (Note from Meagan, I'm not 100% clear how this function 
-           works or its intended purpose. We might want to follow up 
-           with whoever wrote it for a more detailed understanding 
-           and a better name.)
-           The parameters are
-           :galaxyData: A 2-D Numpy Array of radii and vLum data
-           :alpha: fitting parameter from scipy.curve_fit
-           :vLumFreeParam: fitting parameter from scipy.curve_fit"""
+        This is used as the fitting function in scipy.curve_fit
+        to find alpha and vLumFreeParam, and it calculates vNeros 
+        using those values. 
+        
+        The parameters are
+        :galaxyData: A 4-D Numpy Array of radii and vGas, vDisk, VBulge data
+        :alpha: fitting parameter from scipy.curve_fit
+        :vLumFreeParam: fitting parameter from scipy.curve_fit"""
         
         # Parse out data for the galaxy
-        rad,vLum = galaxyData
+        rad,vGas,vDisk,vBulge = galaxyData
         # Apply the vLum free param to the data
-        vLum_scaled = vLum*vLumFreeParam
-        # Calc vLCM with alpha free param
-        vLcm = self.vLCM(rad, vLum_scaled)
+        vLum_scaled = self.vLumSquared(vGas,vDisk,vBulge,disk_scale,bulge_scale)
         # Calc and return vNeros
         return self.vNeros(rad, vLum_scaled, alpha)
         
@@ -127,8 +122,9 @@ class Neros:
         This avoids the issues inherent in calling sqrt, but can produce non-physical vObs^2"""
         
         vLCM = self.vLCM(galaxy_rad, galaxy_vLum, phi_zero)
-    
-        return np.square(galaxy_vLum + alpha*vLCM)
+        # this formula allows vNerosSquared to be negative for some fits which is problematic
+        # chisquared becomes NaN
+        return galaxy_vLum*galaxy_vLum + alpha*vLCM
     
     def vLCM(self, galaxy_rad, galaxy_vLum, phi_zero=3e-11):
         """This computes the vLCM - the actual model
@@ -169,10 +165,9 @@ class Neros:
     def chiSquared(self, observed, expected, error):
         """This computes chi squared"""
         chiSquared = 0
-    
+
         for i in range(len(observed)):
             chiSquared = chiSquared + (((observed[i] - expected[i])**2) / (error[i]**2))
-        
         return chiSquared / len(observed)
     
     def _eTsiFlatMinusOne(self, other_vlum):
