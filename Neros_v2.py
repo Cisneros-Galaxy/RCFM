@@ -83,7 +83,7 @@ class Neros:
         # Parse out data for the galaxy
         rad,vGas,vDisk,vBulge = galaxyData
         # Apply the vLum free param to the data
-        vLum_scaled = self.vLumSquared(vGas,vDisk,vBulge,disk_scale,bulge_scale)
+        vLum_scaled = np.sqrt(self.vLumSquared(vGas,vDisk,vBulge,disk_scale,bulge_scale))
         # Calc and return vNeros
         return self.vNeros(rad, vLum_scaled, alpha)
         
