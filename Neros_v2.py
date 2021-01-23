@@ -67,7 +67,7 @@ class Neros:
     def vLumSquared(self, vGas, vDisk, vBulge, disk_scale=1, bulge_scale=1):
         """Calculates total luminous velocity from the sum of the squares of
            the contributions from gas, disk, and bulge"""
-        return vGas*vGas + disk_scale*vDisk*vDisk + bulge_scale*vBulge*vBulge
+        return vGas**2 + (disk_scale*vDisk)**2 + (bulge_scale*vBulge)**2
     
     def curve_fit_fn(self, galaxyData, alpha, vLumFreeParam, disk_scale, bulge_scale):
         """Formerly known as 'simple'.
@@ -77,8 +77,10 @@ class Neros:
         
         The parameters are
         :galaxyData: A 4-D Numpy Array of radii and vGas, vDisk, VBulge data
-        :alpha: fitting parameter from scipy.curve_fit
-        :vLumFreeParam: fitting parameter from scipy.curve_fit"""
+        :alpha: fitting parameter from scipy.curve_fit, now defined as sqrt(old_alpha)
+        :vLumFreeParam: fitting parameter from scipy.curve_fit
+        :disk_scale: scaling of vDisk
+        :bulge_scale: scaling of vBulge"""
         
         # Parse out data for the galaxy
         rad,vGas,vDisk,vBulge = galaxyData
@@ -119,12 +121,14 @@ class Neros:
         :alpha: From the equation vObs^2 = vLum^2 + alpha*vLCM^2
         :phi_zero: The zero point for the phi integration, used in kappa calculation
         
-        This avoids the issues inherent in calling sqrt, but can produce non-physical vObs^2"""
+        This avoids the issues inherent in calling sqrt, but can produce non-physical vObs^2
+        
+        Note that alpha is now defined differently, so that it is sqrt(old_alpha)"""
         
         vLCM = self.vLCM(galaxy_rad, galaxy_vLum, phi_zero)
         # this formula allows vNerosSquared to be negative for some fits which is problematic
         # chisquared becomes NaN
-        return galaxy_vLum*galaxy_vLum + alpha*vLCM
+        return galaxy_vLum*galaxy_vLum + alpha*alpha*vLCM
     
     def vLCM(self, galaxy_rad, galaxy_vLum, phi_zero=3e-11):
         """This computes the vLCM - the actual model
