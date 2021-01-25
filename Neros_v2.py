@@ -153,11 +153,19 @@ class Neros:
 
 
     def get_chi_squared(self):
+        if not (hasattr(self, 'vObs') and hasattr(self, 'vObsError')):
+            raise RuntimeError("Please call fit before trying to get the fit results")
+
         prediction = self.get_vNeros()
         return self.chiSquared(prediction, self.vObs, self.vObsError)
 
 
     def get_vLum_scaled(self):
+        if not hasattr(self, 'best_fit_values'):
+            raise RuntimeError("Please call fit before trying to get the fit results")
+        if not (hasattr(self, 'vGas') and hasattr(self, 'vDisk') and hasattr(self, 'vBulge')):
+            raise RuntimeError("Please call fit before trying to get the fit results")
+        
         disk_scale = self.best_fit_values['disk_scale']
         bulge_scale = self.best_fit_values['bulge_scale']
         vLum_scaled = np.sqrt(self.vLumSquared(self.vGas, self.vDisk, self.vBulge, disk_scale, bulge_scale))
@@ -165,6 +173,8 @@ class Neros:
 
 
     def get_vNeros(self):
+        if not hasattr(self, 'best_fit_values'):
+            raise RuntimeError("Please call fit before trying to get the fit results")
         alpha = self.best_fit_values['alpha']
         vLum_scaled = self.get_vLum_scaled()
         prediction = self.vNeros(self.rad, vLum_scaled, alpha)
