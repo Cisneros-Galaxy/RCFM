@@ -63,8 +63,8 @@ class Neros:
         self.mw_rad = data[:,0]
         self.mw_vLum = data[:,1]
         self.mw_vLum_interp = interp1d(data[:,0], data[:,1], kind='cubic')
-        mw_phi = self.phi(data[:,0], data[:,1])
-        self.mw_phi_interp = interp1d(data[:,0], mw_phi)
+        self.mw_phi = self.phi(data[:,0], data[:,1])
+        self.mw_phi_interp = interp1d(data[:,0], self.mw_phi)
 
 
     def vLumSquared(self, vGas, vDisk, vBulge, disk_scale=1, bulge_scale=1):
@@ -210,48 +210,45 @@ class Neros:
         return scipy.integrate.cumtrapz(y,x)
 
 
-    def vNeros(self, galaxy_rad, galaxy_vLum, alpha, phi_zero=3e-11):
+    def vNeros(self, galaxy_rad, galaxy_vLum, alpha):
         """This computes the predicted vObs
         
         The parameters are
         :galaxy_rad: A 1-D NumPy array or Pandas DataSeries of radii
         :galaxy_vLum: A 1-D NumPy array or Pandas DataSeries of vLums
         :alpha: From the equation vObs^2 = vLum^2 + alpha*vLCM^2
-        :phi_zero: The zero point for the phi integration, used in kappa calculation
         
         This calls sqrt internally, so it can fail for some values of alpha."""
-        
-        return np.sqrt(self.vNerosSquared(galaxy_rad, galaxy_vLum, alpha, phi_zero=3e-11))
+        return np.sqrt(self.vNerosSquared(galaxy_rad, galaxy_vLum, alpha))
 
 
-    def vNerosSquared(self, galaxy_rad, galaxy_vLum, alpha, phi_zero=3e-11):
+    def vNerosSquared(self, galaxy_rad, galaxy_vLum, alpha):
         """This computes the predicted vObs^2, basically by calling vLCM and applying alpha
         
         The parameters are
         :galaxy_rad: A 1-D NumPy array or Pandas DataSeries of radii
         :galaxy_vLum: A 1-D NumPy array or Pandas DataSeries of vLums
         :alpha: From the equation vObs^2 = vLum^2 + alpha*vLCM^2
-        :phi_zero: The zero point for the phi integration, used in kappa calculation
         
         This avoids the issues inherent in calling sqrt, but can produce non-physical vObs^2
         
         Note that alpha is now defined differently, so that it is sqrt(old_alpha)"""
         
-        vLCM = self.vLCM(galaxy_rad, galaxy_vLum, phi_zero)
+        vLCM = self.vLCM(galaxy_rad, galaxy_vLum)
         # this formula allows vNerosSquared to be negative for some fits which is problematic
         # chisquared becomes NaN
         return galaxy_vLum**2 + (alpha**2)*vLCM
 
 
-    def vLCM(self, galaxy_rad, galaxy_vLum, phi_zero=3e-11):
+    def vLCM(self, galaxy_rad, galaxy_vLum):
         """This computes the vLCM - the actual model
         
         The parameters are
         :galaxy_rad: A 1-D NumPy array or Pandas DataSeries of radii
-        :galaxy_vLum: A 1-D NumPy array or Pandas DataSeries of vLums
-        :phi_zero: The zero point for the phi integration, used in kappa calculation"""
+        :galaxy_vLum: A 1-D NumPy array or Pandas DataSeries of vLums"""
         
         MW_phi = self.mw_phi_interp(galaxy_rad)
+        phi_zero = MW_phi[-1]
         galaxy_phi = self.phi(galaxy_rad, galaxy_vLum)
         k = self.kappa(MW_phi, galaxy_phi, phi_zero)
         v1 = self.v1(MW_phi, galaxy_phi)
@@ -261,10 +258,10 @@ class Neros:
         return vLCM
 
 
-    def kappa(self, MW_phi, other_phi, phi_zero=3e-11):
+    def kappa(self, MW_phi, other_phi, phi_zero):
         """kappa(r) in the paper, just phi_gal(r)/phi_mw(r)"""
         
-        return (other_phi - phi_zero) / (MW_phi - phi_zero)
+        return (other_phi - phi_zero) / (MW_phi - phi_zero*0.999)
 
 
     def v1(self, MW_phi, other_phi):
@@ -303,6 +300,8 @@ class Neros:
     def _eTsiCurveMinusOne(self, MW_phi, other_phi):
         """This computes eTsiFlat - 1, compared to the old code, for numerical stability"""
 
+        MW_phi = self.mw_phi_interp(galaxy_rad)
+        phi_zero = MW_phi[-1]
         numerator = (2*other_phi - 2*MW_phi) / (1 - 2*other_phi)
         denominator = np.sqrt((1 - 2*MW_phi) / (1 - 2*other_phi)) + 1
         return numerator / denominator
