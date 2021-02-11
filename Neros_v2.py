@@ -261,7 +261,7 @@ class Neros:
     def kappa(self, MW_phi, other_phi, phi_zero):
         """kappa(r) in the paper, just phi_gal(r)/phi_mw(r)"""
         
-        return (other_phi - phi_zero) / (MW_phi - phi_zero*0.999)
+        return  (1 + 2*(other_phi-phi_zero)) / (1 + 2*(MW_phi - phi_zero) )
 
 
     def v1(self, MW_phi, other_phi):
