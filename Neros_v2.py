@@ -299,9 +299,7 @@ class Neros:
 
     def _eTsiCurveMinusOne(self, MW_phi, other_phi):
         """This computes eTsiFlat - 1, compared to the old code, for numerical stability"""
-
-        MW_phi = self.mw_phi_interp(galaxy_rad)
-        phi_zero = MW_phi[-1]
+        
         numerator = (2*other_phi - 2*MW_phi) / (1 - 2*other_phi)
         denominator = np.sqrt((1 - 2*MW_phi) / (1 - 2*other_phi)) + 1
         return numerator / denominator
