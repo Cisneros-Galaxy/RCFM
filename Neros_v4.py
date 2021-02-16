@@ -143,7 +143,7 @@ class Neros:
         alpha = self.best_fit_values['alpha']
         disk_scale = self.best_fit_values['disk_scale']
         bulge_scale = self.best_fit_values['bulge_scale']
-        phi_zero = self.get_phi_zero(galaxy_rad)
+        phi_zero = self.phi_zero
         
         if old_alpha:
             alpha = alpha**2
@@ -198,11 +198,6 @@ class Neros:
         """Helper function to get the trimmed observation value errors
         Alteratively, could just call (this object).vObsError"""
         return self.vObsError
-    
-    def get_phi_zero(self, galaxy_rad):
-        valid_rad = valid_rad = galaxy_rad <= self.mw_rad[-1]
-        trimmed_phi = self.mw_phi[:len(valid_rad)]
-        return trimmed_phi[-1]
 
 
     def phi(self, radius, vlum):
@@ -252,20 +247,15 @@ class Neros:
         The parameters are
         :galaxy_rad: A 1-D NumPy array or Pandas DataSeries of radii
         :galaxy_vLum: A 1-D NumPy array or Pandas DataSeries of vLums"""
-        #phi_zero = 2.0e-04
+        
         valid_rad = galaxy_rad <= self.mw_rad[-1]
-        # Which MW_phi calculation should we use?
-        # Right now, this way gives better chi_squared
-        MW_phi = self.mw_phi_interp(galaxy_rad)
-        #MW_phi = self.mw_phi
-        trimmed_phi = MW_phi[:len(valid_rad)]
-        phi_zero = trimmed_phi[-1]
+        MW_phi = self.mw_phi_interp(galaxy_rad[:len(valid_rad)])
+        self.phi_zero = MW_phi[-1]
         galaxy_phi = self.phi(galaxy_rad, galaxy_vLum)
-        k = self.kappa(trimmed_phi, galaxy_phi, phi_zero)
-        v1 = self.v1(trimmed_phi, galaxy_phi, phi_zero)
-        v2 = self.v2(trimmed_phi, galaxy_phi, galaxy_vLum, phi_zero)
+        k = self.kappa(MW_phi, galaxy_phi, self.phi_zero)
+        v1 = self.v1(MW_phi, galaxy_phi, self.phi_zero)
+        v2 = self.v2(MW_phi, galaxy_phi, galaxy_vLum, self.phi_zero)
         vLCM = c * c * k * k * v1 * v2
-        #vLCM = c * c * v1 * v2
         
         return vLCM
 
