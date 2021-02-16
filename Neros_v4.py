@@ -273,7 +273,7 @@ class Neros:
     def kappa(self, MW_phi, other_phi, phi_zero):
         """kappa(r) in the paper, just phi_gal(r)/phi_mw(r)"""
         
-        return  (1 + 2*(MW_phi - phi_zero) ) / (1 + 2*(other_phi-phi_zero))
+        return  ( other_phi) /( MW_phi  ) 
 
 
     def v1(self, MW_phi, other_phi, phi_zero):
@@ -312,6 +312,8 @@ class Neros:
     def _eTsiCurveMinusOne(self, MW_phi, other_phi, phi_zero):
         """This computes eTsiFlat - 1, compared to the old code, for numerical stability"""
         
-        numerator = (2*other_phi + 2*(MW_phi - phi_zero)) / (1 + 2*(other_phi-phi_zero))
-        denominator = np.sqrt((1 + 2*(MW_phi - phi_zero)) / (1 + 2*(other_phi-phi_zero))) + 1
+        numerator = (2*(other_phi ) + 2*(MW_phi )) / (1 - 2*(other_phi ))
+        denominator = np.sqrt((1 - 2*(MW_phi )) / (1 - 2*(other_phi ))) + 1
+        #numerator = (2*(other_phi-phi_zero) + 2*(MW_phi - phi_zero)) / (1 + 2*(other_phi-phi_zero))
+        #denominator = np.sqrt((1 + 2*(MW_phi - phi_zero)) / (1 + 2*(other_phi-phi_zero))) + 1
         return numerator / denominator
