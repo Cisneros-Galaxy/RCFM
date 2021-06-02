@@ -101,12 +101,20 @@ class Neros:
         self.vObs = vObs[valid_rad]
         self.vObsError = vObsError[valid_rad]
         
-        fit_vals, cov = curve_fit(self.curve_fit_fn,(self.rad, self.vGas, self.vDisk, self.vBulge),
-                          self.vObs, sigma=self.vObsError, maxfev=10000)
-        
-        fit_parameter_names  = ['alpha', 'disk_scale', 'bulge_scale']
-        self.best_fit_values = dict(zip(fit_parameter_names, fit_vals))
+        attempts = []
+        for alpha0 in [1, 3, 10, 30, 100, 300]:
+            fit_vals, cov = curve_fit(self.curve_fit_fn,(self.rad, self.vGas, self.vDisk, self.vBulge),
+                              self.vObs, sigma=self.vObsError, p0=[alpha0, 1, 1], maxfev=10000)
 
+            # This is hacky, taking advantage of existing stuff, should do better later
+            fit_parameter_names  = ['alpha', 'disk_scale', 'bulge_scale']
+            self.best_fit_values = dict(zip(fit_parameter_names, fit_vals))
+            attempts.append((fit_vals, self.get_chi_squared()))
+        
+        # get the one with the smallest chi^2 to keep
+        attempts.sort(key=lambda x: x[1])
+        fit_vals = attempts[0][0]
+        self.best_fit_values = dict(zip(fit_parameter_names, fit_vals))
     
     def curve_fit_fn(self, galaxyData, alpha, disk_scale, bulge_scale):
         """Formerly known as 'simple'.
