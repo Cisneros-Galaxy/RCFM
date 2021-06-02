@@ -29,12 +29,15 @@ def phi(radii, vLum):
 
     return phi
 
+
 # Kappa - Given phiMilkyWay and phiOtherGalaxy, calculate kappa
 # Params
 #  phiMW - array of phi values for Milky Way
 #  phiOther - array of phi values for other galaxy
-def kappa(MW_phi, Other_phi, phiZero):
-    return (Other_phi - (3 * (10 ** -11))) / (MW_phi - (3 * (10 ** -11)))
+def kappa(MW_phi, Other_phi):
+    return (Other_phi) / (MW_phi)
+    #return (MW_phi-MW_phi[-1]) / (Other_phi-MW_phi[-1])
+    #return np.sqrt((1 - 2*(MW_phi[-1]-Other_phi))/(1 - 2*(MW_phi[-1]-MW_phi)))
 
 # Beta - Calculate the beta value for use in E Tsi
 # Params
@@ -52,7 +55,8 @@ def eTsiFlat(beta):
 # Params
 #  VlumOther - Vlum data for another galaxy
 def eTsiCurve(MW_phi, Other_phi):
-    return np.sqrt((1 - 2*MW_phi)/(1 - 2*Other_phi))
+    #return np.sqrt((1 - 2*MW_phi)/(1 - 2*Other_phi))
+    return np.sqrt((1 - 2*(MW_phi[-1]-Other_phi))/(1 - 2*(MW_phi[-1]-MW_phi)))
 
 def v1(eTsiCurve):
     num = 2
@@ -60,19 +64,25 @@ def v1(eTsiCurve):
     return 1 - (num/den)
 
 def v2(eTsiFlat, eTsiCurve):
-    num = eTsiFlat + eTsiCurve
-    den = eTsiFlat - eTsiCurve
+    num =    1/(eTsiFlat*eTsiFlat) - eTsiCurve*eTsiCurve 
+    den =  eTsiCurve*eTsiCurve + 1/(eTsiFlat*eTsiFlat)
     return num/den
 
-def vLcm(radii, MW_vLum, Other_vLum, phiZero):
+def vLcm(radii, MW_vLum, Other_vLum):
     MW_phi = phi(radii, MW_vLum)
     Other_phi = phi(radii, Other_vLum)
     b = beta(Other_vLum)
     etflat = eTsiFlat(b)
     etCurve = eTsiCurve(MW_phi, Other_phi)
-    k = kappa(MW_phi, Other_phi, phiZero)
+    k = kappa(MW_phi, Other_phi)
+     
 
-    return c*c*k*k*v1(etCurve)*v2(etflat, etCurve)
+    #took out the terms in kappa squared 
+    return c*v2(etflat, etCurve)
+    #return c*c*k*k*v1(etCurve)*v2(etflat, etCurve)
+    #return c*c*v1(etCurve)*v2(etflat, etCurve)
+
 
 def vNeros(Other_Vlum, vLCM, freeParam):
-    return np.sqrt(np.square(Other_Vlum) + (vLCM*freeParam) )
+    return  (Other_Vlum*0) + (vLCM*freeParam) 
+    #return   (vLCM*freeParam)
