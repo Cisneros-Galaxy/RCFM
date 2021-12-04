@@ -278,9 +278,10 @@ class Neros:
 
     def v1(self, MW_phi, other_phi, phi_zero):
         etc = self._eTsiCurveMinusOne(MW_phi, other_phi, phi_zero)
+        #this fcn is 1-sech-curve
         num = etc**2
         den = (1 + etc)**2 + 1
-        return num/den
+        return  num/den
 
 
     def v2(self, MW_phi, other_phi, other_vlum, phi_zero):
@@ -311,9 +312,7 @@ class Neros:
 
     def _eTsiCurveMinusOne(self, MW_phi, other_phi, phi_zero):
         """This computes eTsiFlat - 1, compared to the old code, for numerical stability"""
-        
+        #order of galaxies reversed here - represents light from MW to Other gal. Plus sign is opposite on num-numerator, so this isn't really delta-psi-curve anymore. it's algo mas
         numerator = (2*(other_phi ) + 2*(MW_phi )) / (1 - 2*(other_phi ))
         denominator = np.sqrt((1 - 2*(MW_phi )) / (1 - 2*(other_phi ))) + 1
-       # numerator = (2*(other_phi-phi_zero) + 2*(MW_phi - phi_zero)) / (1 + 2*(other_phi-phi_zero))
-       # denominator = np.sqrt((1 + 2*(MW_phi - phi_zero)) / (1 + 2*(other_phi-phi_zero))) + 1
         return numerator / denominator
