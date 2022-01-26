@@ -279,18 +279,23 @@ class Neros:
 
     def v1(self, MW_phi, other_phi, phi_zero):
         etc = self._eTsiCurveMinusOne(MW_phi, other_phi, phi_zero)
-        #Numerator sign before the second 1: cosh(+)/sinh(-)curved 
-        #cosh currently >  sinh
+        #sinh: uncomment following two lines
+        #num = (etc+1)**2 - 1
+        #den = 2*(1 + etc)
+        #cosh: uncomment following two lines
         #num = (etc+1)**2 + 1
         #den = 2*(1 + etc)
-        #sech-curved fcn
+        #tanh: uncomment following two lines
+        num = ((etc+1)**2 - 1) 
+        den = ((etc+1)**2 + 1) 
+        #sech-curved: uncomment following two lines
         #num = 2*(1 + etc)
         #den = (etc+1)**2 +1
-        #original 1-sech-curved
-        num = (etc)**2 
-        den = 1+ (1 + etc)**2
-        return num/den
-        #return 1
+        #(1-sech): uncomment following two lines
+        #num = (etc)**2 
+        #den = 1+ (1 + etc)**2
+        return  num/den
+       
 
     def v2(self, MW_phi, other_phi, other_vlum, phi_zero):
         etFlat = self._eTsiFlatMinusOne(other_vlum)
@@ -298,12 +303,13 @@ class Neros:
         #coth-e-flat/curve
         num = 2 + etFlat + etCurve
         den = etFlat - etCurve
-        #csch
+        #csch: uncomment following two lines
         #num = 2*(etFlat+1)*(etCurve+1)
         #den =   (etFlat+1)**2 + (etCurve+1)**2
-        #sinh
+        #sinh: uncomment following two lines
         #num = etFlat - etCurve
         #den = 2*np.sqrt((etFlat + 1)/(etCurve +1))
+        #not sure which function
         #num = (etFlat+1)*(etCurve+1) -1/((etFlat+1)*(etCurve+1)) 
         #den =  (etFlat + 1)/(etCurve +1)+1/((etFlat+1)*(etCurve+1))
         return num/den
@@ -329,14 +335,8 @@ class Neros:
 
 
     def _eTsiCurveMinusOne(self, MW_phi, other_phi, phi_zero):
-        """This computes eTsiFlat - 1, compared to the old code, for numerical stability"""
-        #wrong order - from other to MW. v4 version
-        #numerator = (2*(other_phi ) - 2*(MW_phi )) / (1 - 2*(other_phi ))
-        #denominator = np.sqrt((1 - 2*(MW_phi )) / (1 - 2*(other_phi ))) + 1
-        #correct order  - from other to MW, 
-        #Sign: when plus sign in first term it's wrong. But this is the correct frame order
+        """This computes eTsiCurve - 1, compared to the old code, for numerical stability"""
+        #NOTE: this is the correct frame order and correct signs for numerical stability calculation
         numerator = ( 2*(MW_phi )-2*(other_phi )) / (1 - 2*(MW_phi ))
         denominator = np.sqrt((1 - 2*(other_phi)) / (1 - 2*(MW_phi ))) + 1
-       # numerator = (2*(other_phi-phi_zero) + 2*(MW_phi - phi_zero)) / (1 + 2*(other_phi-phi_zero))
-       # denominator = np.sqrt((1 + 2*(MW_phi - phi_zero)) / (1 + 2*(other_phi-phi_zero))) + 1
         return numerator / denominator
