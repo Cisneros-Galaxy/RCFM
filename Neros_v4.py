@@ -93,19 +93,33 @@ class Neros:
         # the range of our Milky Way data, we may improve this method later
         # We're storing these for later computations, they'll get overwritten
         # every time we call fit
-        valid_rad = rad <= self.mw_rad[-1]
-        self.rad = rad[valid_rad]
-        self.vGas = vGas[valid_rad]
-        self.vDisk = vDisk[valid_rad]
-        self.vBulge = vBulge[valid_rad]
-        self.vObs = vObs[valid_rad]
-        self.vObsError = vObsError[valid_rad]
         
-        fit_vals, cov = curve_fit(self.curve_fit_fn,(self.rad, self.vGas, self.vDisk, self.vBulge),
-                          self.vObs, sigma=self.vObsError, maxfev=10000)
+        # clip galaxy data larger than mw radius data
+        valid_rad_end = rad <= self.mw_rad[-1]
+        cliprad = rad[valid_rad_end]
+        clipvGas = vGas[valid_rad_end]
+        clipvDisk = vDisk[valid_rad_end]
+        clipvBulge = vBulge[valid_rad_end]
+        clipvObs = vObs[valid_rad_end]
+        clipvObsError = vObsError[valid_rad_end]
         
-        fit_parameter_names  = ['alpha', 'disk_scale', 'bulge_scale']
-        self.best_fit_values = dict(zip(fit_parameter_names, fit_vals))
+        # clip galaxy data shorter than mw radius data
+        valid_rad_beg= cliprad >= self.mw_rad[0]
+        self.rad = cliprad[valid_rad_beg]
+        self.vGas = clipvGas[valid_rad_beg]
+        self.vDisk = clipvDisk[valid_rad_beg]
+        self.vBulge = clipvBulge[valid_rad_beg]
+        self.vObs = clipvObs[valid_rad_beg]
+        self.vObsError = clipvObsError[valid_rad_beg]
+        
+        if len(self.rad) != 0:
+            fit_vals, cov = curve_fit(self.curve_fit_fn,(self.rad, self.vGas, self.vDisk, self.vBulge),
+                              self.vObs, sigma=self.vObsError, maxfev=10000, method='trf')
+
+            fit_parameter_names  = ['alpha', 'disk_scale', 'bulge_scale']
+            self.best_fit_values = dict(zip(fit_parameter_names, fit_vals))
+        else:
+            print("Galaxy radius not in range of MW Model")
 
     
     def curve_fit_fn(self, galaxyData, alpha, disk_scale, bulge_scale):
@@ -248,15 +262,24 @@ class Neros:
         :galaxy_rad: A 1-D NumPy array or Pandas DataSeries of radii
         :galaxy_vLum: A 1-D NumPy array or Pandas DataSeries of vLums"""
         
-        valid_rad = galaxy_rad <= self.mw_rad[-1]
-        MW_phi = self.mw_phi_interp(galaxy_rad[:len(valid_rad)])
-        self.phi_zero = MW_phi[-1]
-        galaxy_phi = self.phi(galaxy_rad, galaxy_vLum)
-        k = self.kappa(MW_phi, galaxy_phi, self.phi_zero)
-        v1 = self.v1(MW_phi, galaxy_phi, self.phi_zero)
-        v2 = self.v2(MW_phi, galaxy_phi, galaxy_vLum, self.phi_zero)
-        vLCM = c * c * k * k * v1 * v2
+        # Clip galaxy radius so that it is range of MW data
+        # clip radii larger than MW and shorter than MW
+        valid_rad_end = galaxy_rad <= self.mw_rad[-1]
+        valid_gal_rad = galaxy_rad[:len(valid_rad_end)]
+        valid_rad_beg = galaxy_rad >= self.mw_rad[0]
+        valid_rad = valid_gal_rad[valid_rad_beg]
         
+        if len(valid_rad) != 0:
+            MW_phi = self.mw_phi_interp(valid_rad)
+            self.phi_zero = MW_phi[-1]
+            galaxy_phi = self.phi(galaxy_rad, galaxy_vLum)
+            k = self.kappa(MW_phi, galaxy_phi, self.phi_zero)
+            v1 = self.v1(MW_phi, galaxy_phi, self.phi_zero)
+            v2 = self.v2(MW_phi, galaxy_phi, galaxy_vLum, self.phi_zero)
+            vLCM = c * c * k * k * v1 * v2
+        else:
+             print("Galaxy radius not in range of MW model")
+                
         return vLCM
 
 
@@ -299,11 +322,12 @@ class Neros:
         return numerator / denominator
 
 
-    def _eTsiCurveMinusOne(self, MW_phi, other_phi, phi_zero):
+    def _eTsiCurveMinusOne(self, MW_phi, other_phi, phi_zero=0):
         """This computes eTsiFlat - 1, compared to the old code, for numerical stability"""
-        
-        numerator = (2*(other_phi ) + 2*(MW_phi )) / (1 - 2*(other_phi ))
-        denominator = np.sqrt((1 - 2*(MW_phi )) / (1 - 2*(other_phi ))) + 1
-        #numerator = (2*(other_phi-phi_zero) + 2*(MW_phi - phi_zero)) / (1 + 2*(other_phi-phi_zero))
-        #denominator = np.sqrt((1 + 2*(MW_phi - phi_zero)) / (1 + 2*(other_phi-phi_zero))) + 1
+        # Meagan method
+        #numerator = (2*(other_phi ) + 2*(MW_phi )) / (1 - 2*(other_phi ))
+        #denominator = np.sqrt((1 - 2*(MW_phi )) / (1 - 2*(other_phi ))) + 1
+        # Rich method
+        numerator = (2*(other_phi-phi_zero) + 2*(MW_phi - phi_zero)) / (1 + 2*(other_phi-phi_zero))
+        denominator = np.sqrt((1 + 2*(MW_phi - phi_zero)) / (1 + 2*(other_phi-phi_zero))) + 1
         return numerator / denominator
