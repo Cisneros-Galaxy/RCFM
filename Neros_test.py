@@ -314,16 +314,16 @@ class Neros:
         #den = etFlat - etCurve
         
         #csch: uncomment following two lines
-        #num = 2*(etFlat+1)*(etCurve+1)
-        #den =   (etFlat+1)**2 + (etCurve+1)**2
+        num = 2*(etFlat+1)*(etCurve+1)
+        den =   (etFlat+1)**2 + (etCurve+1)**2
         
         #sinh: uncomment following two lines
         #num = etFlat - etCurve
         #den = 2*np.sqrt((etFlat + 1)/(etCurve +1))
         
         #not sure which function
-        num = (etFlat+1)*(etCurve+1) -1/((etFlat+1)*(etCurve+1)) 
-        den =  (etFlat + 1)/(etCurve +1)+1/((etFlat+1)*(etCurve+1))
+        #num = (etFlat+1)*(etCurve+1) -1/((etFlat+1)*(etCurve+1)) 
+        #den =  (etFlat + 1)/(etCurve +1)+1/((etFlat+1)*(etCurve+1))
         
         return num/den
         
