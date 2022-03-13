@@ -279,39 +279,52 @@ class Neros:
 
     def v1(self, MW_phi, other_phi, phi_zero):
         etc = self._eTsiCurveMinusOne(MW_phi, other_phi, phi_zero)
+        
+        # Testing v1 functional forms
         #sinh: uncomment following two lines
         #num = (etc+1)**2 - 1
         #den = 2*(1 + etc)
+        
         #cosh: uncomment following two lines
         #num = (etc+1)**2 + 1
         #den = 2*(1 + etc)
+        
         #tanh: uncomment following two lines
-        num = ((etc+1)**2 - 1) 
-        den = ((etc+1)**2 + 1) 
+        #num = ((etc+1)**2 - 1) 
+        #den = ((etc+1)**2 + 1) 
+        
         #sech-curved: uncomment following two lines
-        #num = 2*(1 + etc)
-        #den = (etc+1)**2 +1
+        num = 2*(1 + etc)
+        den = (etc+1)**2 +1
+        
         #(1-sech): uncomment following two lines
         #num = (etc)**2 
         #den = 1+ (1 + etc)**2
+        
         return  num/den
        
 
     def v2(self, MW_phi, other_phi, other_vlum, phi_zero):
         etFlat = self._eTsiFlatMinusOne(other_vlum)
         etCurve = self._eTsiCurveMinusOne(MW_phi, other_phi, phi_zero)
+        
+        # Testing v2 functional forms
         #coth-e-flat/curve
-        num = 2 + etFlat + etCurve
-        den = etFlat - etCurve
+        #num = 2 + etFlat + etCurve
+        #den = etFlat - etCurve
+        
         #csch: uncomment following two lines
         #num = 2*(etFlat+1)*(etCurve+1)
         #den =   (etFlat+1)**2 + (etCurve+1)**2
+        
         #sinh: uncomment following two lines
         #num = etFlat - etCurve
         #den = 2*np.sqrt((etFlat + 1)/(etCurve +1))
+        
         #not sure which function
-        #num = (etFlat+1)*(etCurve+1) -1/((etFlat+1)*(etCurve+1)) 
-        #den =  (etFlat + 1)/(etCurve +1)+1/((etFlat+1)*(etCurve+1))
+        num = (etFlat+1)*(etCurve+1) -1/((etFlat+1)*(etCurve+1)) 
+        den =  (etFlat + 1)/(etCurve +1)+1/((etFlat+1)*(etCurve+1))
+        
         return num/den
         
 
