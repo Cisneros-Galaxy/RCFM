@@ -294,12 +294,12 @@ class Neros:
         #den = ((etc+1)**2 + 1) 
         
         #sech-curved: uncomment following two lines
-        num = 2*(1 + etc)
-        den = (etc+1)**2 +1
+        #num = 2*(1 + etc)
+        #den = (etc+1)**2 +1
         
         #(1-sech): uncomment following two lines
-        #num = (etc)**2 
-        #den = 1+ (1 + etc)**2
+        num = (etc)**2 
+        den = 1+ (1 + etc)**2
         
         return  num/den
        
