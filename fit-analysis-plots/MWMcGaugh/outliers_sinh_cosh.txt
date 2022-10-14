@@ -1,0 +1,2 @@
+Galaxies with residuals greater than 200 (vNeros-vObs)
+{'NGC2903_rotmod-Copy1', 'NGC2841_rotmod-Copy1', 'NGC7331_rotmod-Copy1', 'UGC02487_rotmod-Copy1', 'NGC5055_rotmod-Copy1', 'NGC3521_rotmod-Copy1'}
