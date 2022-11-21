@@ -1,2 +1,2 @@
 Galaxies with residuals greater than 200 (vNeros-vObs)
-{'NGC2903_rotmod-Copy1', 'NGC2841_rotmod-Copy1', 'NGC7331_rotmod-Copy1', 'UGC02487_rotmod-Copy1', 'NGC5055_rotmod-Copy1', 'NGC3521_rotmod-Copy1'}
+{'NGC0801_rotmod-Copy1', 'NGC5371_rotmod-Copy1', 'UGC11914_rotmod-Copy1', 'NGC2955_rotmod-Copy1', 'NGC5055_rotmod-Copy1', 'UGC06786_rotmod-Copy1', 'NGC6195_rotmod-Copy1', 'UGC02916_rotmod-Copy1', 'NGC3521_rotmod-Copy1', 'NGC2841_rotmod-Copy1', 'NGC5005_rotmod-Copy1', 'NGC2903_rotmod-Copy1', 'UGC02487_rotmod-Copy1', 'NGC7331_rotmod-Copy1', 'UGC05253_rotmod-Copy1'}
