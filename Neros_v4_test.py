@@ -280,24 +280,24 @@ class Neros:
     def v1(self, MW_phi, other_phi, phi_zero):
         etc = self._eTsiCurveMinusOne(MW_phi, other_phi, phi_zero)
         #sinh: uncomment following three lines
-#         num = (etc+1)**2 - 1
-#         den = 2*(1 + etc)
-#         v1_calc = num/den
+        num = (etc+1)**2 - 1
+        den = 2*(1 + etc)
+        v1_calc = num/den
         
         # 1-sinh: uncomment following three lines
 #         num = (etc+1)**2 - 1
 #         den = 2*(1 + etc)
 #         v1_calc = 1-(num/den)
         
-        #cosh uncomment following three lines
+        #cosh: uncomment following three lines
 #         num = (etc+1)**2 + 1
 #         den = 2*(1 + etc)
 #         v1_calc = num/den
         
-        #sech
-        num = 2*(1 + etc)
-        den = (etc+1)**2 + 1
-        v1_calc = num/den
+        #sech: uncomment following three lines
+#         num = 2*(1 + etc)
+#         den = (etc+1)**2 + 1
+#         v1_calc = num/den
         
         return v1_calc
        
