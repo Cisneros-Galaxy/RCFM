@@ -1,4 +1,8 @@
 .DS_STORE
+
+graphs/*
+fit-analysis-plots/*
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
