@@ -3,6 +3,7 @@
 graphs/*
 fit-analysis-plots/MWMcGaugh/*
 fit-analysis-plots/MWXueSofue/*
+fit-analysis-plots/test
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
