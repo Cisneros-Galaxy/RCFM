@@ -1,7 +1,8 @@
 .DS_STORE
 
 graphs/*
-fit-analysis-plots/*
+fit-analysis-plots/MWMcGaugh/*
+fit-analysis-plots/MWXueSofue/*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
