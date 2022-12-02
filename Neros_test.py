@@ -279,39 +279,35 @@ class Neros:
 
     def v1(self, MW_phi, other_phi, phi_zero):
         etc = self._eTsiCurveMinusOne(MW_phi, other_phi, phi_zero)
-        #sinh: uncomment following two lines
-        #num = (etc+1)**2 - 1
-        #den = 2*(1 + etc)
-        #cosh: uncomment following two lines
-        #num = (etc+1)**2 + 1
-        #den = 2*(1 + etc)
-        #tanh: uncomment following two lines
-        num = ((etc+1)**2 - 1) 
-        den = ((etc+1)**2 + 1) 
-        #sech-curved: uncomment following two lines
-        #num = 2*(1 + etc)
-        #den = (etc+1)**2 +1
-        #(1-sech): uncomment following two lines
-        #num = (etc)**2 
-        #den = 1+ (1 + etc)**2
-        return  num/den
+        #sinh: uncomment following three lines
+#         num = (etc+1)**2 - 1
+#         den = 2*(1 + etc)
+#         v1_calc = num/den
+        
+        # 1-sinh: uncomment following three lines
+#         num = (etc+1)**2 - 1
+#         den = 2*(1 + etc)
+#         v1_calc = 1-(num/den)
+        
+        #cosh uncomment following three lines
+#         num = (etc+1)**2 + 1
+#         den = 2*(1 + etc)
+#         v1_calc = num/den
+        
+        #sech
+        num = 2*(1 + etc)
+        den = (etc+1)**2 + 1
+        v1_calc = num/den
+        
+        return v1_calc
        
 
     def v2(self, MW_phi, other_phi, other_vlum, phi_zero):
         etFlat = self._eTsiFlatMinusOne(other_vlum)
         etCurve = self._eTsiCurveMinusOne(MW_phi, other_phi, phi_zero)
-        #coth-e-flat/curve
-        num = 2 + etFlat + etCurve
-        den = etFlat - etCurve
-        #csch: uncomment following two lines
-        #num = 2*(etFlat+1)*(etCurve+1)
-        #den =   (etFlat+1)**2 + (etCurve+1)**2
-        #sinh: uncomment following two lines
-        #num = etFlat - etCurve
-        #den = 2*np.sqrt((etFlat + 1)/(etCurve +1))
-        #not sure which function
-        #num = (etFlat+1)*(etCurve+1) -1/((etFlat+1)*(etCurve+1)) 
-        #den =  (etFlat + 1)/(etCurve +1)+1/((etFlat+1)*(etCurve+1))
+        #COSH:NN uncomment following two linesversion 1(e^2z =e^c * e^f)
+        num = (etFlat +1)*(etCurve+1)  +1
+        den = 2*np.sqrt((etFlat + 1)*(etCurve +1))
         return num/den
         
 

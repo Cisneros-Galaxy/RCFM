@@ -8,6 +8,8 @@
 # to do a family of fits, that will be a class member
 # Usage will be documented in the class
 
+# Formerly named Neros_v4_test.py
+
 import numpy as np
 from scipy.interpolate import interp1d
 import scipy.integrate
@@ -265,7 +267,7 @@ class Neros:
         v1 = self.v1(trimmed_phi, galaxy_phi, phi_zero)
         v2 = self.v2(trimmed_phi, galaxy_phi, galaxy_vLum, phi_zero)
         vLCM = c * c * k * k * v1 * v2
-        #vLCM = c * c * v1 * v2
+        #vLCM = c * c * v2 * v2
         
         return vLCM
 
@@ -274,22 +276,42 @@ class Neros:
         """kappa(r) in the paper, just phi_gal(r)/phi_mw(r)"""
         
         return   other_phi  /  MW_phi 
-
+        
+        
 
     def v1(self, MW_phi, other_phi, phi_zero):
         etc = self._eTsiCurveMinusOne(MW_phi, other_phi, phi_zero)
-        # 1-sech-curve
-        num = etc**2
-        den = (1 + etc)**2 + 1
-        return  num/den
-
+        #sinh: uncomment following three lines
+        num = (etc+1)**2 - 1
+        den = 2*(1 + etc)
+        v1_calc = num/den
+        
+        # 1-sinh: uncomment following three lines
+#         num = (etc+1)**2 - 1
+#         den = 2*(1 + etc)
+#         v1_calc = 1-(num/den)
+        
+        #cosh: uncomment following three lines
+#         num = (etc+1)**2 + 1
+#         den = 2*(1 + etc)
+#         v1_calc = num/den
+        
+        #sech: uncomment following three lines
+#         num = 2*(1 + etc)
+#         den = (etc+1)**2 + 1
+#         v1_calc = num/den
+        
+        return v1_calc
+       
 
     def v2(self, MW_phi, other_phi, other_vlum, phi_zero):
         etFlat = self._eTsiFlatMinusOne(other_vlum)
         etCurve = self._eTsiCurveMinusOne(MW_phi, other_phi, phi_zero)
-        num = 2 + etFlat + etCurve
-        den = etFlat - etCurve
+        #COSH:NN uncomment following two linesversion 1(e^2z =e^c * e^f)
+        num = (etFlat +1)*(etCurve+1)  +1
+        den = 2*np.sqrt((etFlat + 1)*(etCurve +1))
         return num/den
+        
 
 
     def chiSquared(self, model, expected, error):
@@ -311,8 +333,8 @@ class Neros:
 
 
     def _eTsiCurveMinusOne(self, MW_phi, other_phi, phi_zero):
-        """This computes eTsiFlat - 1, compared to the old code, for numerical stability"""
-        #order of galaxies reversed here, and Plus sign error in numerator
-        numerator = (2*(other_phi ) + 2*(MW_phi )) / (1 - 2*(other_phi ))
-        denominator = np.sqrt((1 - 2*(MW_phi )) / (1 - 2*(other_phi ))) + 1
+        """This computes eTsiCurve - 1, compared to the old code, for numerical stability"""
+        #NOTE: this is the correct frame order and correct signs for numerical stability calculation
+        numerator = ( 2*(MW_phi )-2*(other_phi )) / (1 - 2*(MW_phi ))
+        denominator = np.sqrt((1 - 2*(other_phi)) / (1 - 2*(MW_phi ))) + 1
         return numerator / denominator
