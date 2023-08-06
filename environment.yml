@@ -3,7 +3,7 @@ channels:
   - conda-forge
 dependencies:
   - python=3.11
-  - pandas=1.5  # Restricting this to sub pandas v2.0 as the pandas API changed here
+  - pandas=1.5  
   - matplotlib
   - notebook
   - jupyterlab
