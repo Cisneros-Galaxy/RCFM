@@ -1,4 +1,4 @@
-name: rcfm-analysis
+name: rcfm_analysis
 channels:
   - conda-forge
 dependencies:
@@ -6,4 +6,5 @@ dependencies:
   - pandas=1.5  
   - matplotlib
   - notebook
+  - scipy
   - jupyterlab
