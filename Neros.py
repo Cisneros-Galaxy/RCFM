@@ -320,7 +320,7 @@ class Neros:
 
         for i in range(len(model)):
             chiSquared = chiSquared + (((model[i] - expected[i])**2) / (error[i]**2))
-        return chiSquared / len(model)
+        return chiSquared / (len(model) - 3) 
 
 
     def _eTsiFlatMinusOne(self, other_vlum):
