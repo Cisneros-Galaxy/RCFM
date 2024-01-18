@@ -95,7 +95,7 @@ class Neros:
         # the range of our Milky Way data, we may improve this method later
         # We're storing these for later computations, they'll get overwritten
         # every time we call fit
-        valid_rad = rad <= self.mw_rad[-1]
+        valid_rad = (rad <= self.mw_rad[-1]) & (rad >= self.mw_rad[0])
         self.rad = rad[valid_rad]
         self.vGas = vGas[valid_rad]
         self.vDisk = vDisk[valid_rad]
