@@ -3,7 +3,7 @@ from os.path import join
 import hashlib
 
 # Python program to find the SHA-1 message digest of a file
-def hash_file(filename):
+def hashFile(filename):
    """"This function returns the SHA-1 hash
    of the file passed into it"""
 
@@ -27,7 +27,7 @@ def hash_file(filename):
 #  all unique files in the specified relative folder
 def getFiles(dirRelPath):
   fileList = [x for x in listdir(dirRelPath) if x[0] != '.']
-  hashList = [hash_file(join(dirRelPath,x)) for x in fileList]
+  hashList = [hashFile(join(dirRelPath,x)) for x in fileList]
 
   filteredFileList = []
   filteredHashList = []
