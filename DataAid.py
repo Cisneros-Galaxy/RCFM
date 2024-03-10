@@ -1,9 +1,44 @@
 from os import listdir
+from os.path import join
+import hashlib
+
+# Python program to find the SHA-1 message digest of a file
+def hash_file(filename):
+   """"This function returns the SHA-1 hash
+   of the file passed into it"""
+
+   # make a hash object
+   h = hashlib.sha1()
+
+   # open file for reading in binary mode
+   with open(filename,'rb') as file:
+
+       # loop till the end of the file
+       chunk = 0
+       while chunk != b'':
+           # read only 1024 bytes at a time
+           chunk = file.read(1024)
+           h.update(chunk)
+
+   # return the hex representation of digest
+   return h.hexdigest()
 
 # Goes into the specified folder for Galaxies and returns
-#  all files in the specified relative folder
+#  all unique files in the specified relative folder
 def getFiles(dirRelPath):
-  return [x for x in listdir(dirRelPath) if x[0] != '.']
+  fileList = [x for x in listdir(dirRelPath) if x[0] != '.']
+  hashList = [hash_file(join(dirRelPath,x)) for x in fileList]
+
+  filteredFileList = []
+  filteredHashList = []
+  for thisFile, thisHash in zip(fileList, hashList):
+     if thisHash not in filteredHashList:
+        filteredHashList.append(thisHash)
+        filteredFileList.append(thisFile)
+
+  filteredFileList = fileList
+
+  return filteredFileList
 
 # Given a line of data from a file, convert each string value
 #  (which are sepperated by tabs) to floats
