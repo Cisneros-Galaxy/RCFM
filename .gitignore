@@ -116,3 +116,9 @@ venv.bak/
 .mypy_cache/
 .dmypy.json
 dmypy.json
+
+# output images
+graphs/*.png
+graphs/*.jpg
+graphs/*.jpeg
+graphs/*.pdf
