@@ -215,7 +215,14 @@ class Neros:
         x = np.concatenate([np.array([0]), x])
         y = np.concatenate([np.array([0]), y])
         #May want to switch to Simpson's rule: scipy.integrate.simps
-        return scipy.integrate.cumtrapz(y,x)
+        try:
+            # newer scipy
+            integral = scipy.integrate.cumulative_trapezoid(y,x)
+        except AttributeError:
+            # older scipy
+            integral = scipy.integrate.cumtrapz(y,x)
+            
+        return integral
 
 
     def vNeros(self, galaxy_rad, galaxy_vLum, alpha):
