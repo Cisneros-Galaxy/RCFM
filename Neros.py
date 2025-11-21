@@ -104,7 +104,7 @@ class Neros:
         self.vObsError = vObsError[valid_rad]
         
         fit_vals, cov = curve_fit(self.curve_fit_fn,(self.rad, self.vGas, self.vDisk, self.vBulge),
-                          self.vObs, p0=[1.0, 1.0, 1.0], sigma=self.vObsError, maxfev=10000)
+                          self.vObs, p0=[0.01, 1.0, 1.0], sigma=self.vObsError, maxfev=10000)
         
         fit_parameter_names  = ['alpha', 'disk_scale', 'bulge_scale']
         self.best_fit_values = dict(zip(fit_parameter_names, fit_vals))
