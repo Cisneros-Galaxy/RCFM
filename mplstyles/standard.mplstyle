@@ -1,0 +1,38 @@
+#trying to customize here, see:
+#https://matplotlib.org/users/customizing.html
+#matplotlib.rc('figure', figsize=(3.4, 3.4*(4/6)))
+lines.linewidth : 2
+
+#ticks
+xtick.top : False
+xtick.bottom : True
+xtick.minor.visible : True
+xtick.direction : in
+xtick.major.size : 8
+xtick.minor.size : 4
+xtick.major.width : 2
+xtick.minor.width : 1
+xtick.labelsize : 22
+
+ytick.left : True
+ytick.right : False
+ytick.minor.visible : True
+ytick.direction : in
+ytick.major.size : 8
+ytick.minor.size : 4
+ytick.major.width : 2
+ytick.minor.width : 1
+ytick.labelsize : 22
+
+
+#error bars
+#errorbar.capsize : 3
+
+#axis stuff
+axes.labelsize : 32
+
+#legend
+legend.fontsize : 18
+
+#fonts
+font.family : Sans-Serif
