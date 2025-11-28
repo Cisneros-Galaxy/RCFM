@@ -75,7 +75,7 @@ class Neros:
         return vGas**2 + (disk_scale*vDisk)**2 + (bulge_scale*vBulge)**2
 
 
-    def fit(self, rad, vGas, vDisk, vBulge, vObs, vObsError):
+    def fit(self, rad, vGas, vDisk, vBulge, vObs, vObsError, starting_point=[1.0, 1.0, 1.0]):
         """Fits a galaxy using the LCM model, core functionality of this class
         
         This takes a lot of the things that were done ad-hoc in Model.ipynb and
@@ -89,7 +89,8 @@ class Neros:
         :vDisk: Inferred disk mass as a velocity, galaxy_vDisk, as a numpy arry
         :vBulge: Inferred bulge mass as a velocity, galaxy_vBulge, as a numpy array
         :vObs: Observed galaxy rotation velocity, as a numpy array
-        :vObsError: Measurement error on vObs, as a numpy array"""
+        :vObsError: Measurement error on vObs, as a numpy array
+        :starting_point: (optional) Initial values in fit for [alpha, disk_scale, bulge_scale]"""
         
         # First we need to clip the galaxy data so it doesn't extend beyond
         # the range of our Milky Way data, we may improve this method later
@@ -184,6 +185,15 @@ class Neros:
         return prediction
 
 
+    def get_vNeros_squared(self):
+        if not hasattr(self, 'best_fit_values'):
+            raise RuntimeError("Please call fit before trying to get the fit results")
+        alpha = self.best_fit_values['alpha']
+        vLum_scaled = self.get_vLum_scaled()
+        prediction_sq = self.vNerosSquared(self.rad, vLum_scaled, alpha)
+        return prediction_sq
+
+  
     def get_rad(self):
         """Helper function to get the trimmed galaxy radii
         Alteratively, could just call (this object).rad"""
@@ -234,7 +244,21 @@ class Neros:
         :alpha: From the equation vObs^2 = vLum^2 + alpha*vLCM^2
         
         This calls sqrt internally, so it can fail for some values of alpha."""
-        return np.sqrt(self.vNerosSquared(galaxy_rad, galaxy_vLum, alpha))
+        # Prevent nans - 
+        # ideas: if the result is negative, return 0
+        # does this break the fitter, since it's both discontinuous and flat? (ans: yes, in some cases)
+        # other options: make all values negative, that should push it away but still scale
+        # only flip sign on negative points (dangerous! could trick us quite easily - but easy to detect in final result)
+        # zero out negative points (even more dangerous, that's actually changing the model)
+        # Go the other way: make it jump big in the other direction, set it to vobs*1000 or something
+        vn_squared = self.vNerosSquared(galaxy_rad, galaxy_vLum, alpha)
+        if np.any(vn_squared < 0):
+          # return all negative - does seem to work
+          # return np.sqrt(np.abs(vn_squared)) * -1
+          # allow negatives, just return negative vNeros, could be a more gentle exploration of space
+          return np.sqrt(np.abs(vn_squared)) * np.sign(vn_squared)
+        else:
+          return np.sqrt(vn_squared)
 
 
     def vNerosSquared(self, galaxy_rad, galaxy_vLum, alpha):
