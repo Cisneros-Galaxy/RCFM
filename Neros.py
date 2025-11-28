@@ -105,7 +105,7 @@ class Neros:
         self.vObsError = vObsError[valid_rad]
         
         fit_vals, cov = curve_fit(self.curve_fit_fn,(self.rad, self.vGas, self.vDisk, self.vBulge),
-                          self.vObs, p0=[0.01, 1.0, 1.0], sigma=self.vObsError, maxfev=10000)
+                          self.vObs, p0=starting_point, sigma=self.vObsError, maxfev=10000)
         
         fit_parameter_names  = ['alpha', 'disk_scale', 'bulge_scale']
         self.best_fit_values = dict(zip(fit_parameter_names, fit_vals))
@@ -253,9 +253,8 @@ class Neros:
         # Go the other way: make it jump big in the other direction, set it to vobs*1000 or something
         vn_squared = self.vNerosSquared(galaxy_rad, galaxy_vLum, alpha)
         if np.any(vn_squared < 0):
-          # return all negative - does seem to work
-          # return np.sqrt(np.abs(vn_squared)) * -1
-          # allow negatives, just return negative vNeros, could be a more gentle exploration of space
+          # allow negatives, just return negative vNeros, more gentle exploration of space
+          # detect failures by negative vNeros values
           return np.sqrt(np.abs(vn_squared)) * np.sign(vn_squared)
         else:
           return np.sqrt(vn_squared)
