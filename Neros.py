@@ -14,7 +14,7 @@ import numpy as np
 from scipy.interpolate import interp1d
 import scipy.integrate
 from scipy.optimize import curve_fit
-
+import itertools
 
 c = 3 * (10**5) # km/s
 
@@ -75,13 +75,64 @@ class Neros:
         return vGas**2 + (disk_scale*vDisk)**2 + (bulge_scale*vBulge)**2
 
 
-    def fit(self, rad, vGas, vDisk, vBulge, vObs, vObsError, starting_point=[1.0, 1.0, 1.0]):
+    def grid_fit(self, rad, vGas, vDisk, vBulge, vObs, vObsError,
+                 alpha=[1.0], disk_scale=[1.0], bulge_scale=[1.0]):
+        """Does a grid search on different starting points for fits.
+
+        It tries all combinations of alpha, disk_scale, bulge_scale (a cartesian product),
+        so alpha=[1, 2], disk_scale=[3,4], bulge_scale=[5,6] would try 8 combinations:
+        [1,3,5], [1,3,6], [1,4,5], [1,4,6], [2,3,5], [2,3,6], [2,4,5], [2,4,6].
+        If _all_ fits fail, it sets the fit parameters to None (check for this!)
+
+        Paramters (mostly same a fit):
+        :rad: The radii of the galaxy being fit, as a numpy array
+        :vGas: Inferred gas mass as a velocity, galaxy_vGas, as a numpy array
+        :vDisk: Inferred disk mass as a velocity, galaxy_vDisk, as a numpy arry
+        :vBulge: Inferred bulge mass as a velocity, galaxy_vBulge, as a numpy array
+        :vObs: Observed galaxy rotation velocity, as a numpy array
+        :vObsError: Measurement error on vObs, as a numpy array
+        :alpha: List of alpha values to try as starting points in fit
+        :disk_scale: List of disk_scale values to try as starting points in fit
+        :bulge_scale: List of bulge_scale values to try as starting points in fit"""
+
+        parameters_to_try = itertools.product(alpha, disk_scale, bulge_scale)
+        fit_chi2 = {}
+        for pars in parameters_to_try:
+            try:
+                self.fit(rad, vGas, vDisk, vBulge, vObs, vObsError, 
+                         starting_point=pars)
+                fit_results = self.get_fit_results(rad)
+                fit_chi2[pars] = fit_results['chi_squared']
+            except Exception as e:
+                #print(f"Error for parameters {pars}")
+                #print(e)
+                pass
+        # redo best-fit
+        if fit_chi2:
+            pars = min(fit_chi2, key=lambda x: fit_chi2[x])
+            #print(pars)
+            #print(fit_chi2)
+            self.fit(rad, vGas, vDisk, vBulge, vObs, vObsError, 
+                         starting_point=pars)
+            fit_results = self.get_fit_results(rad)
+        else:
+            # Fit failed for all values tried
+            fit_parameter_names  = ['alpha', 'disk_scale', 'bulge_scale']
+            sentinels = [None, None, None]
+            self.best_fit_values = dict(zip(fit_parameter_names, sentinels))
+            raise RuntimeError("Fit failed for all starting points.")
+
+
+    def fit(self, rad, vGas, vDisk, vBulge, vObs, vObsError, 
+            starting_point=[1.0, 1.0, 1.0], allow_negative=False):
         """Fits a galaxy using the LCM model, core functionality of this class
         
         This takes a lot of the things that were done ad-hoc in Model.ipynb and
         puts them together to simplify the process.  Results will be stored 
         internally to simplify later operations. Ideally, the usage simplifies
-        to simply calling this fit, then asking for chi_squared, vLum, etc
+        to simply calling this fit, then asking for chi_squared, vLum, etc.
+        Note: we catch a failure mode here of returning a negative vNeros_squared.
+        In that case, the fit raises a RuntimeError (unless allow_negative=True)
         
         Parameters:
         :rad: The radii of the galaxy being fit, as a numpy array
@@ -90,7 +141,8 @@ class Neros:
         :vBulge: Inferred bulge mass as a velocity, galaxy_vBulge, as a numpy array
         :vObs: Observed galaxy rotation velocity, as a numpy array
         :vObsError: Measurement error on vObs, as a numpy array
-        :starting_point: (optional) Initial values in fit for [alpha, disk_scale, bulge_scale]"""
+        :starting_point: (optional) Initial values in fit for [alpha, disk_scale, bulge_scale]
+        :allow_negative: prevents this fit from raising an exception if vNeros_squared is negative (unphysical)"""
         
         # First we need to clip the galaxy data so it doesn't extend beyond
         # the range of our Milky Way data, we may improve this method later
@@ -109,6 +161,9 @@ class Neros:
         
         fit_parameter_names  = ['alpha', 'disk_scale', 'bulge_scale']
         self.best_fit_values = dict(zip(fit_parameter_names, fit_vals))
+
+        if not allow_negative and np.any(self.get_vNeros_squared() < 0):
+          raise RuntimeError("Got negative vNeros_squared, unphysical result. Rejecting as failed fit.")
 
     
     def curve_fit_fn(self, galaxyData, alpha, disk_scale, bulge_scale):
