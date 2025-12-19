@@ -23,9 +23,11 @@ The `utils` directory contains some utility files. These aren't currently used b
 ### References
 
 This is the code powering the analysis in the papers:
-- List papers here
+- [2024] https://arxiv.org/pdf/2310.04372
+- [2015] https://arxiv.org/abs/1506.04587 
+- [2014] https://arxiv.org/abs/1407.7583
 
-# Setup
+
 
 ## To download this project
 
